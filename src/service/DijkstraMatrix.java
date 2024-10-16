@@ -6,56 +6,18 @@ import java.util.Scanner;
 
 import javax.swing.text.html.HTML.Tag;
 
+import input.FileRead;
+
+
 public class DijkstraMatrix {
     public static void main(String[] args) {
+    	
+    	String filePath = "D:\\PBL\\Input.txt";
+    	
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Nhập số đỉnh của đồ thị: ");
-        int vertices = scanner.nextInt();
-        scanner.nextLine();
-
-        String[] vertexNames = new String[vertices];
-        List<Vert> vertList = new ArrayList<>();
-
-        System.out.println("Nhập tên các đỉnh:");
-        for (int i = 0; i < vertices; i++) {
-            System.out.print("Đỉnh " + (i + 1) + ": ");
-            vertexNames[i] = scanner.nextLine();
-            Vert newVert = new Vert();
-            newVert.setName(vertexNames[i]);
-            vertList.add(newVert);
-        }
-
-        double[][] graph = new double[vertices][vertices];
+        List<Vert> vertList = FileRead.readGraphFromFile(filePath);
         
-        System.out.println("Nhập ma trận trọng số:");
-        for (int i = 0; i < vertices; i++) {
-            for (int j = i + 1; j < vertices; j++) {
-                System.out.print("Nhập trọng số cho cạnh từ đỉnh " + vertexNames[i] + " tới đỉnh " + vertexNames[j] + ": ");
-                double weight = scanner.nextDouble();
-                while (weight < 0) {
-                    System.out.println("Trọng số không thể âm. Vui lòng nhập lại.");
-                    weight = scanner.nextDouble();
-                }
-                graph[i][j] = weight;
-                graph[j][i] = weight;
-            }
-        }
-
-        // Tạo danh sách các cạnh và thêm vào mỗi đỉnh
-        for (int i = 0; i < vertices; i++) {
-            Vert vert = vertList.get(i);
-            List<Edge> edges = new ArrayList<>();
-            for (int j = 0; j < vertices; j++) {
-                if (graph[i][j] > 0) {
-                    Edge edge = new Edge(graph[i][j], vert, vertList.get(j));
-                    edges.add(edge);
-                }
-            }
-            vert.setList(edges);
-        }
-
         Vert sourceVert = null, targetVert = null;
-        scanner.nextLine();
         while (sourceVert == null || targetVert == null) {
             System.out.print("Nhập tên đỉnh nguồn: ");
             String sourceName = scanner.nextLine();
@@ -91,26 +53,7 @@ public class DijkstraMatrix {
         System.out.println();
         System.out.println("Bảng chỉ đường: ");
         
-        for ( Vert target : vertList )
-        {
-        	if ( !target.equals(sourceVert)) {
-        		List<Vert> shortestPathVariable = DijkstraBuild.getShortestVertTarget(target);
-        		
-        		if ( !shortestPathVariable.isEmpty()) {
-        			System.out.print( target.getName() + " : ");
-        			
-        			for ( int i = shortestPathVariable.size() - 1 ; i >= 0 ; i --) {
-        				System.out.print(shortestPathVariable.get(i).getName());
-        				if ( i != 0 ) {
-        					System.out.print(" -> ");
-        				}
-        			}
-        			System.out.println();
-        		}
-        		
-        	}
-        	
-        }
+       
         
     }
 }
