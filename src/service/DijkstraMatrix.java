@@ -12,7 +12,8 @@ import input.FileRead;
 public class DijkstraMatrix {
     public static void main(String[] args) {
     	
-    	String filePath = "D:\\PBL\\Input.txt";
+    	String filePath = "C:\\Users\\nguye\\Documents\\Data.txt";; 
+
     	
         Scanner scanner = new Scanner(System.in);
         List<Vert> vertList = FileRead.readGraphFromFile(filePath);
@@ -24,7 +25,6 @@ public class DijkstraMatrix {
             System.out.print("Nhập tên đỉnh đích: ");
             String targetName = scanner.nextLine();
 
-            // Tìm đỉnh nguồn và đỉnh đích
             for (Vert vert : vertList) {
                 if (vert.getName().equals(sourceName)) {
                     sourceVert = vert;

@@ -29,7 +29,6 @@ public class FileServerHandler implements Runnable {
 	public Map<Integer, String> messageMap = new HashMap<>();
 	
 	public FileServerHandler() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public FileServerHandler(Socket clientSocket , JTextArea serverTextArea, String name , JComboBox<String> comboBox) {
@@ -42,10 +41,8 @@ public class FileServerHandler implements Runnable {
 
 	@Override
 	public void run() {
-	    try {
-	        // Thông báo khi client kết nối
+	    try {      
 	        serverTextArea.append("Client đã kết nối từ địa chỉ: " + clientSocket.getInetAddress() + " và port: " + clientSocket.getPort() + "\n");
-
 	        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 	        out = new PrintWriter(clientSocket.getOutputStream(), true);
 	        out.println("Server is running on port: " + clientSocket.getLocalPort());
@@ -58,7 +55,6 @@ public class FileServerHandler implements Runnable {
 	            System.out.println("Received from client: " + inputLine); 
 	            processClientRequest(inputLine);
 	        }
-
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    } finally {
@@ -70,13 +66,13 @@ public class FileServerHandler implements Runnable {
 	    if (request.startsWith("PORT:")) {
 	        String port = request.substring(5).trim();
 	        clientName = "Client " + port;
-	        sendMessageToServer(clientName + " đã gửi yêu cầu " + request);
 	        comboBox.addItem("Client " + port);
 	    }
 
 	    
 	    
-	    if (request.startsWith("FILE_PATH:")) {
+	    Object StringBuilder;
+		if (request.startsWith("FILE_PATH:")) {
 	    	sendMessageToServer(clientName + " đã gửi yêu cầu " + request);
 	        String filePath = request.substring(10).trim();
 	        sendMessageToServer(clientName + " đã gửi đường dẫn file: " + filePath);
@@ -85,15 +81,14 @@ public class FileServerHandler implements Runnable {
 	    } else if (request.startsWith("MANUAL_INPUT:")) {
 	        StringBuilder manualInputBuilder = new StringBuilder();
 	        String manualInput = request.substring(13).trim();
-	        
-	        // Lặp để đọc dữ liệu nhập đến khi gặp "END"
+	      
 	        while (!manualInput.equals("END")) {
 	            manualInputBuilder.append(manualInput).append("\n");
 	            try {
-	                manualInput = in.readLine(); // Đọc tiếp các dòng tiếp theo
+	                manualInput = in.readLine();
 	                if (manualInput == null) {
-	                    break; // Ngắt nếu client ngừng gửi
-	                }
+	                    break; 
+	                    }
 	            } catch (IOException e) {
 	                e.printStackTrace();
 	                break; 
@@ -102,16 +97,33 @@ public class FileServerHandler implements Runnable {
 
 	        String[] manualInputArray = manualInputBuilder.toString().split("\\n");
 	        sendMessageToServer(clientName + " đã gửi dữ liệu nhập thủ công: \n" + manualInputBuilder.toString());
+	        
 	        ShortestPathRouting shortestPathRouting = new ShortestPathRouting(null, manualInputArray);
 	        shortestPathRouting.showShortestPathRouting();
 	    } else if (request.startsWith("DISCONNECT")) {
 	        sendMessageToServer(clientName + " đã ngắt kết nối.\n");
 	    }
 	    else if (request.startsWith("CONTENT:")) {
+	    	StringBuilder contentBuilder = new StringBuilder();
 	    	String message = request.substring(8).trim();
-	    	System.out.println("Message nhận được là " + message );
-	    	int port = clientSocket.getPort();
-	    	storeMessage(port, message);
+	    	contentBuilder.append(message).append("\n");
+	    	while(true) {
+	    		try {
+					String nextLine = in.readLine();
+					   if (nextLine == null || nextLine.trim().isEmpty()) {
+			                break;
+			            }
+					   contentBuilder.append(nextLine).append("\n");
+				} catch (Exception e) {
+					 e.printStackTrace();
+			            break;
+				}
+	    	}
+	    	    String fullContent = contentBuilder.toString().trim();
+	    	    System.out.println("Full content nhận được: \n" + fullContent);
+	    	  
+	    	    int port = clientSocket.getPort();
+	    	    storeMessage(port, fullContent); 
 	    }
 	}
 
@@ -130,8 +142,6 @@ public class FileServerHandler implements Runnable {
         messageMap.put(port, message);
         System.out.println("Stored message for port " + port + ": " + message);
     }
-
-
 	public void stop() {
 		try {
 			if(!clientSocket.isClosed()) {

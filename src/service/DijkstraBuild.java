@@ -14,7 +14,7 @@ public class DijkstraBuild {
 
         while (!priorityQueue.isEmpty()) {
             Vert actualVert = priorityQueue.poll();
-            for (Edge edge : actualVert.getList()) { // duyet qua tat ca cac canh cua dinh hien tai
+            for (Edge edge : actualVert.getList()) {
                 Vert v = edge.getTargetVert();
                 if (!v.isVisited()) {
                     double newDistance = actualVert.getDist() + edge.getWeight();

@@ -174,7 +174,9 @@ public class FileClient extends JFrame {
                         if (serverPort == port) {
                             SwingUtilities.invokeLater(() -> {
                                 JOptionPane.showMessageDialog(this, "Kết nối thành công đến port: " + serverPort);
+                                if (!isManualInput)
                                 inputArea.append("Client " + socket.getLocalPort() + " đã kết nối đến server.\n");
+                                else inputArea.append("\nClient " + socket.getLocalPort() + " đã kết nối đến server.\n");
                                 System.out.println(inputArea.getText());
                             });
                             isConnected = true; 
@@ -182,13 +184,14 @@ public class FileClient extends JFrame {
                             sendRequest(); 
                             Thread.sleep(2000);
                             sendContent(socket); 
-                            System.out.println("Lỗi 1413");
-                            StringBuilder responseBuilder = new StringBuilder();
-                            String responseLine;
-                            while ((responseLine = in.readLine()) != null) {
-                                responseBuilder.append(responseLine).append("\n");
-                            }
-                            System.out.println("Lỗi 1414");
+                           // System.out.println("Lỗi 1413");
+//                            StringBuilder responseBuilder = new StringBuilder();
+//                            String responseLine;
+//                            while ((responseLine = in.readLine()) != null) {
+//                            	System.out.println("responseLine " + responseLine);
+//                                responseBuilder.append(responseLine).append("\n");
+//                            }
+//                            System.out.println("Lỗi 1414");
                         } else {
                             SwingUtilities.invokeLater(() -> {
                                 JOptionPane.showMessageDialog(this, "Port không khớp! Server đang chạy trên port: " + serverPort);

@@ -60,7 +60,7 @@ public class FileServer extends JFrame {
         btnStop = new JButton("Stop");
         btnStop.setFont(new Font("Times New Roman", Font.PLAIN, 13));
         btnStop.setBounds(306, 68, 91, 21);
-        btnStop.setEnabled(false); // Chỉ có thể nhấn khi server đang chạy
+        btnStop.setEnabled(false);
         btnStop.addActionListener(e -> stopServer());
         getContentPane().add(btnStop);
 
@@ -82,7 +82,7 @@ public class FileServer extends JFrame {
         contentPane.add(lblPort);
         
         JScrollPane scrollPane = new JScrollPane(textArea_1);
-        scrollPane.setBounds(45, 120, 349, 192); // Thay đổi kích thước nếu cần
+        scrollPane.setBounds(45, 120, 349, 192); 
         contentPane.add(scrollPane);
         
         portField = new JTextField("8080");
@@ -100,7 +100,6 @@ public class FileServer extends JFrame {
         	}
             String selectedClient = (String) comboBox.getSelectedItem();
 
-            // Nếu chọn Client
             if (selectedClient != null && selectedClient.split(" ").length > 1) {
                 int clientPort = Integer.parseInt(selectedClient.split(" ")[1]);
                 FileServerHandler fileServerHandler = findClientHandlerByPort(clientPort);
@@ -166,7 +165,7 @@ public class FileServer extends JFrame {
                 textArea_1.append("Cổng không hợp lệ. Vui lòng nhập một số.\n");
               
             } catch (IOException e) {
-                e.printStackTrace();
+              
             }
         }).start();
     }
@@ -175,7 +174,7 @@ public class FileServer extends JFrame {
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close();
-                isRunning = false;  // Cập nhật trạng thái là đã dừng
+                isRunning = false;  
                 String stopMessage = "Server đã dừng.\n";
                 textArea_1.append(stopMessage);
                 btnStart.setEnabled(true);

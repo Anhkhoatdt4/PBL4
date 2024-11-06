@@ -29,23 +29,16 @@ public class ShortestPathRouting extends JFrame {
     private String filePath ;
  
     public ShortestPathRouting(String filePath , String[] manulInput) {
-        // Cấu hình JFrame
         setTitle("Shortest Path Routing");
         setSize(877, 551);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(null);
-        
-        // Tạo JPanel cho "GroupBox" với TitledBorder
         JPanel groupBox = new JPanel();
         groupBox.setBounds(10, 10, 265, 200); 
         getContentPane().add(groupBox);
-
-        // Tạo TitledBorder với font tùy chỉnh (không BOLD)
         TitledBorder titledBorder = new TitledBorder("Chọn trạm trên mạng");
         titledBorder.setTitleFont(new Font("Arial", Font.PLAIN, 16)); 
         titledBorder.setTitleColor(Color.BLACK); 
-        
-        // Áp dụng TitledBorder cho JPanel
         groupBox.setBorder(titledBorder);
         groupBox.setLayout(null);
         
@@ -78,27 +71,21 @@ public class ShortestPathRouting extends JFrame {
         btnSelect.setBounds(90, 130, 85, 35);
         btnSelect.setBorder(new LineBorder(Color.BLACK, 1));
         groupBox.add(btnSelect);
-        
-        // Tạo TitledBorder với font tùy chỉnh (không BOLD)
+      
         TitledBorder controlBorder = new TitledBorder("Điều khiển");
-        controlBorder.setTitleFont(new Font("Arial", Font.PLAIN, 16)); // Thay đổi kích thước chữ và không BOLD
-        controlBorder.setTitleColor(Color.BLACK); // Thay đổi màu chữ nếu cần
-        
-        // Đọc đồ thị từ file và vẽ lên JPanel
-        // List<Vert> vertices = FileRead.readGraphFromFile("D:\\PBL\\Input.txt"); 
-        
+        controlBorder.setTitleFont(new Font("Arial", Font.PLAIN, 16));
+        controlBorder.setTitleColor(Color.BLACK); 
+    
         List<Vert> vertices;
         if (filePath != null) {
-            // Đọc đồ thị từ file
             vertices = FileRead.readGraphFromFile(filePath);
         } else {
-            // Xử lý dữ liệu từ manualInput
             vertices = FileRead.readGraphFromArray(manulInput);
             System.out.println(vertices);
         }
         
         GraphPanel graphPanel = new GraphPanel(vertices);
-        graphPanel.setBounds(300, -181, 514, 576); // Xác định vị trí và kích thước của JPanel
+        graphPanel.setBounds(300, -181, 514, 576);
         graphPanel.setPreferredSize(new Dimension(470, 431));
         getContentPane().add(graphPanel);
         graphPanel.setLayout(null);
@@ -175,14 +162,13 @@ public class ShortestPathRouting extends JFrame {
                 	         JPanel controlPanel = new JPanel();
                 	         controlPanel.setBounds(596, 405, 200, 100);
                 	         getContentPane().add(controlPanel);
-                	         
-                	         // Áp dụng TitledBorder cho JPanel
+                	      
                 	         controlPanel.setBorder(controlBorder);
                 	         controlPanel.setLayout(null);
                 	         
                 	         JButton btnEnd = new JButton("Kết thúc");
                 	         btnEnd.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-                	         btnEnd.setBounds(50, 30, 100, 35); // Vị trí và kích thước của nút
+                	         btnEnd.setBounds(50, 30, 100, 35); 
                 	         btnEnd.setBorder(new LineBorder(Color.BLACK, 1));
                 	         controlPanel.add(btnEnd);
                 	              			
