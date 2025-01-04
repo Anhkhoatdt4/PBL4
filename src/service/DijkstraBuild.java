@@ -39,7 +39,6 @@ public class DijkstraBuild {
     }
 
     public static double getDistance(Vert targetVert) {
-        // Ensure the target vertex has its distance computed
         return targetVert.getDist();
     }
 }

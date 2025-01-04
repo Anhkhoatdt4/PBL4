@@ -38,7 +38,4 @@ public class Edge {
 	public void setWeight(Double weight) {
 		this.weight = weight;
 	}
-	
-	
-	
 }

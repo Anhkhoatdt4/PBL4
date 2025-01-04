@@ -22,10 +22,10 @@ public class UID extends JFrame implements ActionListener {
     private JLabel lblAppStatus;
     private JPanel pnlMain;
     private List<JTextArea> listTextArea = new ArrayList<>();
-    private Font Arial_Plain_15 = new Font("Arial", Font.PLAIN, 15); // Khai báo phông chữ
-    private int screenWidth = 800; // Thay đổi kích thước theo nhu cầu của bạn
-    private int screenHeight = 600; // Thay đổi kích thước theo nhu cầu của bạn
-    private int port = 11111; // Port giả định, thay đổi theo nhu cầu của bạn
+    private Font Arial_Plain_15 = new Font("Arial", Font.PLAIN, 15);
+    private int screenWidth = 800; 
+    private int screenHeight = 600;
+    private int port = 11111;
 
     public UID() {
         GUI();
@@ -35,7 +35,7 @@ public class UID extends JFrame implements ActionListener {
         int x, y, w, h;
         
         pnlMain = new JPanel();
-        pnlMain.setLayout(null); // Sử dụng layout null để kiểm soát chính xác vị trí
+        pnlMain.setLayout(null);
         
         btnStart = new JButton("Start");
         btnStart.setFont(Arial_Plain_15);
@@ -95,8 +95,7 @@ public class UID extends JFrame implements ActionListener {
         x = (int) (0.02 * screenWidth);
         y = (int) (0.885 * screenHeight);
         lblAppStatus.setBounds(x, y, w, h);
-        
-        // Thêm các thành phần vào pnlMain
+
         pnlMain.add(lblPort);
         pnlMain.add(txtPort);
         pnlMain.add(btnStart);
@@ -104,14 +103,12 @@ public class UID extends JFrame implements ActionListener {
         pnlMain.add(cbbClients);
         pnlMain.add(lblAppStatus);
         
-        // Thêm pnlMain vào JFrame
         this.add(pnlMain);
         
-        // Cấu hình JFrame
         this.setSize(new Dimension(screenWidth, screenHeight));
         this.setTitle("Server");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null); // Đặt JFrame ở giữa màn hình
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
 
@@ -141,13 +138,6 @@ public class UID extends JFrame implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        // Xử lý sự kiện khi nút được nhấn
+    public void actionPerformed(ActionEvent e) {     
     }
-
-//    public static void main(String[] args) {
-//        // Khởi chạy ứng dụng Swing
-//        javax.swing.SwingUtilities.invokeLater(UID::new);
-//    }
-
 }

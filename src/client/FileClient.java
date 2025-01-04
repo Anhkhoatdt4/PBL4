@@ -3,6 +3,7 @@ package client;
 import javax.swing.*;
 
 import UI.ShortestPathRouting;
+import input.FileRead;
 
 import java.awt.event.*;
 import java.io.*;
@@ -13,20 +14,37 @@ public class FileClient extends JFrame {
 
     private JTextField filePathField;
     private JButton importButton, manualInputButton, connectButton;
-    private JTextArea inputArea; // JTextArea để nhập ma trận
+    private JTextArea inputArea;
     private Socket socket;
     private PrintWriter out;
-    private boolean isManualInput = false; // Biến để theo dõi trạng thái nhập thủ công
+    private boolean isManualInput = false;
     private JButton btnNhpFile;
     private boolean isConnected = false;
-    public FileClient() {
+    private static FileClient currentClient; 
+    
+    public static void setCurrentClient(FileClient client) {
+        currentClient = client;
+    }
+    
+    public static FileClient getCurrentClient() {
+        return currentClient;
+    }
+    
+    public boolean getConnected() {
+		return isConnected;
+	}
+
+	public void setConnected(boolean isConnected) {
+		this.isConnected = isConnected;
+	}
+
+	public FileClient() {
         setTitle("Client");
         setSize(445, 389);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
         setLocationRelativeTo(null);
         
-        // Giao diện chọn file
         JLabel fileLabel = new JLabel("Chọn file:");
         fileLabel.setBounds(24, 52, 100, 20);
         getContentPane().add(fileLabel);
@@ -48,7 +66,7 @@ public class FileClient extends JFrame {
         getContentPane().add(connectButton);
 
         inputArea = new JTextArea(); 
-        inputArea.setEditable(false); // Không cho phép chỉnh sửa ngay từ đầu
+        inputArea.setEditable(false);
         inputArea.setBounds(20, 110, 400, 192);
         getContentPane().add(inputArea);
         
@@ -71,7 +89,7 @@ public class FileClient extends JFrame {
     private void disconnectFromServer() {
         if (socket != null && !socket.isClosed()) {
             try {
-                             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 out.println("DISCONNECT"); 
                 out.flush();
                 
@@ -84,26 +102,26 @@ public class FileClient extends JFrame {
     }
     
 
-    
-    
-    // Chuyển đổi giữa chế độ nhập file và nhập thủ công
+
     private void toggleInputOption(boolean isManual) {
-    	System.out.println(isManualInput);
-        isManualInput = !isManualInput; // Đảo ngược trạng thái
+    	if(isManual) System.out.println("nhập ma trận");
+    	else System.out.println("đọc file");
+    	isManualInput = isManual;
         
         if (isManualInput) {
-            filePathField.setEnabled(false); // Vô hiệu hóa trường nhập file
-            importButton.setEnabled(false); // Vô hiệu hóa nút Import file
-            inputArea.setVisible(true); // Hiện JTextArea
-            inputArea.setEditable(true); // Cho phép chỉnh sửa cho JTextArea
-            manualInputButton.setEnabled(false); // Vô hiệu hóa nút Nhập thủ công
+        	filePathField.setText("");
+            filePathField.setEnabled(false);
+            importButton.setEnabled(false);
+            inputArea.setVisible(true);
+            inputArea.setEditable(true);
+            manualInputButton.setEnabled(false);
             btnNhpFile.setEnabled(true);
         } else {
             filePathField.setEnabled(true); 
             importButton.setEnabled(true); 
             inputArea.setText("");
-            inputArea.setEditable(false); // Không cho phép chỉnh sửa
-            manualInputButton.setEnabled(true); // Kích hoạt nút Nhập thủ công
+            inputArea.setEditable(false);
+            manualInputButton.setEnabled(true);
             btnNhpFile.setEnabled(false);
         }
     }
@@ -119,14 +137,29 @@ public class FileClient extends JFrame {
 
     private void connectToServer() {
         if (isConnected) {
-            ShortestPathRouting shortestPathRouting = new ShortestPathRouting(filePathField.getText(), null);
-            shortestPathRouting.showShortestPathRouting();
+        	if(isManualInput)
+        	{
+        		String[] text = FileRead.generate(inputArea.getText());
+//        		for(String line : text) {
+//        			System.out.println("Dòng: " + line);
+//        		}
+        		ShortestPathRouting shortestPathRouting = new ShortestPathRouting(null, text);
+        		 shortestPathRouting.showShortestPathRouting();
+        	}
+        	else {
+        		ShortestPathRouting shortestPathRouting = new ShortestPathRouting(filePathField.getText(), null);
+                shortestPathRouting.showShortestPathRouting();
+        	}
             return; 
         }
-
+    	
+//    	if (isConnected) {
+//            // Nếu đã kết nối, thông báo người dùng và không làm gì thêm
+//            JOptionPane.showMessageDialog(this, "Bạn đã kết nối rồi! Không cần kết nối lại.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+//            return;
+//        }
         new Thread(() -> {
             try {
-                // Kiểm tra đầu vào
                 if (!isManualInput && filePathField.getText().isEmpty()) {
                     SwingUtilities.invokeLater(() -> {
                         JOptionPane.showMessageDialog(this, "Vui lòng nhập đường dẫn tệp hoặc chọn 'Nhập thủ công' trước khi kết nối!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
@@ -141,29 +174,28 @@ public class FileClient extends JFrame {
                     return;
                 }
 
-                String serverIp = "localhost";
-                String portInput = JOptionPane.showInputDialog(this, "Nhập cổng(port): ");
-                if (portInput == null || portInput.trim().isEmpty()) {
-                    SwingUtilities.invokeLater(() -> {
-                        JOptionPane.showMessageDialog(this, "Cổng không hợp lệ! Vui lòng nhập lại.", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-                    });
-                    return;
+                String serverIp = "localhost"; 
+                int port = 0;
+                if(!isConnected) {
+	                String portInput = JOptionPane.showInputDialog(this, "Nhập cổng(port): ");
+	                if (portInput == null || portInput.trim().isEmpty()) {
+	                    SwingUtilities.invokeLater(() -> {
+	                        JOptionPane.showMessageDialog(this, "Cổng không hợp lệ! Vui lòng nhập lại.", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+	                    });
+	                    return;
+	                }
+	                
+	                    try {
+	                    port = Integer.parseInt(portInput);
+	                } catch (NumberFormatException e) {
+	                    SwingUtilities.invokeLater(() -> {
+	                        JOptionPane.showMessageDialog(this, "Cổng không hợp lệ! Vui lòng nhập một số nguyên.", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+	                    });
+	                    return;
+	                }
                 }
-
-                int port;
-                try {
-                    port = Integer.parseInt(portInput);
-                } catch (NumberFormatException e) {
-                    SwingUtilities.invokeLater(() -> {
-                        JOptionPane.showMessageDialog(this, "Cổng không hợp lệ! Vui lòng nhập một số nguyên.", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-                    });
-                    return;
-                }
-
-                // Kết nối tới server
                 socket = new Socket(serverIp, port); 
-
-                // Kiểm tra kết nối
+                System.out.println("connected : " + socket.isConnected());
                 if (socket.isConnected()) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     String serverMessage = in.readLine();
@@ -180,18 +212,11 @@ public class FileClient extends JFrame {
                                 System.out.println(inputArea.getText());
                             });
                             isConnected = true; 
-
+//                            System.out.println("setCurrenClient ");
+//                            FileClient.setCurrentClient(FileClient.getCurrentClient());
                             sendRequest(); 
                             Thread.sleep(2000);
                             sendContent(socket); 
-                           // System.out.println("Lỗi 1413");
-//                            StringBuilder responseBuilder = new StringBuilder();
-//                            String responseLine;
-//                            while ((responseLine = in.readLine()) != null) {
-//                            	System.out.println("responseLine " + responseLine);
-//                                responseBuilder.append(responseLine).append("\n");
-//                            }
-//                            System.out.println("Lỗi 1414");
                         } else {
                             SwingUtilities.invokeLater(() -> {
                                 JOptionPane.showMessageDialog(this, "Port không khớp! Server đang chạy trên port: " + serverPort);
@@ -204,10 +229,8 @@ public class FileClient extends JFrame {
             } catch (IOException e) {
                 System.out.println("Lỗi I/O: " + e.getMessage());
             } catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
-
                 try {
                     if (socket != null && !socket.isClosed()) {
                         socket.close();
@@ -225,41 +248,41 @@ public class FileClient extends JFrame {
                 System.out.println("Không thể gửi yêu cầu: Socket đã đóng.");
                 return;
             }
-            
+
             out = new PrintWriter(socket.getOutputStream(), true);
-            System.out.println("Send request đã được gọi");
-            
+
             out.println("PORT:" + socket.getLocalPort());
             out.println("end");
-            
+
             if (!isManualInput) {
-                out.println("FILE_PATH:" + filePathField.getText()); 
-                out.flush();
-                System.out.println("đã gửi đường dẫn");
+                String filePath = filePathField.getText().trim();
+                if (!filePath.isEmpty()) {
+                	System.out.println("Đã gửi đường dẫn: " + filePath);
+                    out.println("FILE_PATH:" + filePath); 
+                    out.flush();
+                } else {
+                    out.println("MANUAL_INPUT:" + inputArea.getText());
+                    out.println("END");
+                    out.flush();
+                }
             } else {
-                // Gửi dữ liệu ma trận
+            	System.out.println("Đã gửi dữ liệu thủ công");
                 out.println("MANUAL_INPUT:" + inputArea.getText());
-                out.println("END"); // Dấu hiệu kết thúc
-                System.out.println("-----------------------");
-                System.out.println("Ma trận đã gửi là \n" + inputArea.getText());
-                System.out.println("-----------------------");
+                out.println("END");
                 out.flush();
-                System.out.println("đã gửi ma trận thủ công");
             }
-            
+
         } catch (IOException e) {
             System.out.println("Lỗi khi gửi yêu cầu: " + e.getMessage());
         } 
     }
+
 
     public void sendContent(Socket socket) {
         if (socket == null || socket.isClosed()) {
             System.out.println("Không thể gửi nội dung: Socket không hợp lệ.");
             return;
         }
-        
-        System.out.println("Send content đã được gọi");
-        
         try {
      
             out = new PrintWriter(socket.getOutputStream(), true);
@@ -271,7 +294,6 @@ public class FileClient extends JFrame {
         }
     }
 
-
 	public void showClient() {
 		this.toFront();
 		this.setLocationRelativeTo(null);
@@ -279,8 +301,6 @@ public class FileClient extends JFrame {
 		this.setVisible(true);
 	}
 	
-
-
     public static void main(String[] args) {
         FileClient client = new FileClient();
         client.setVisible(true);

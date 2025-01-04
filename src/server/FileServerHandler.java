@@ -52,7 +52,6 @@ public class FileServerHandler implements Runnable {
 	            if (inputLine.equals("QUIT")) {
 	                break;
 	            }
-	            System.out.println("Received from client: " + inputLine); 
 	            processClientRequest(inputLine);
 	        }
 	    } catch (Exception e) {
@@ -69,16 +68,16 @@ public class FileServerHandler implements Runnable {
 	        comboBox.addItem("Client " + port);
 	    }
 
-	    
-	    
 	    Object StringBuilder;
 		if (request.startsWith("FILE_PATH:")) {
+			System.out.println("Server doc file ");
 	    	sendMessageToServer(clientName + " đã gửi yêu cầu " + request);
 	        String filePath = request.substring(10).trim();
 	        sendMessageToServer(clientName + " đã gửi đường dẫn file: " + filePath);
 	        ShortestPathRouting shortestPathRouting = new ShortestPathRouting(filePath, null);
 	        shortestPathRouting.showShortestPathRouting();
 	    } else if (request.startsWith("MANUAL_INPUT:")) {
+	    	System.out.println("Ma tran lon` ma m ");
 	        StringBuilder manualInputBuilder = new StringBuilder();
 	        String manualInput = request.substring(13).trim();
 	      
@@ -120,8 +119,6 @@ public class FileServerHandler implements Runnable {
 				}
 	    	}
 	    	    String fullContent = contentBuilder.toString().trim();
-	    	    System.out.println("Full content nhận được: \n" + fullContent);
-	    	  
 	    	    int port = clientSocket.getPort();
 	    	    storeMessage(port, fullContent); 
 	    }
@@ -148,9 +145,7 @@ public class FileServerHandler implements Runnable {
 				clientSocket.close();
 			}
 		} catch (Exception e) {
-			System.out.println("con cac");
 			e.printStackTrace();
 		}
 	}
-
 }

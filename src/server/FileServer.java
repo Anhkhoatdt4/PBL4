@@ -96,7 +96,6 @@ public class FileServer extends JFrame {
         comboBox.addActionListener(e -> {
         	if (saveText().length() > serverMessage.length()) {
             serverMessage = textArea_1.getText();
-        	System.out.println(serverMessage);
         	}
             String selectedClient = (String) comboBox.getSelectedItem();
 

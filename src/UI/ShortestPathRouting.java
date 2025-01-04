@@ -181,8 +181,7 @@ public class ShortestPathRouting extends JFrame {
                 	}
                 		
                 }
-               
-               
+
                 graphPanel.repaint();
             } else {
                 System.out.println("Nguồn hoặc đích không hợp lệ.");

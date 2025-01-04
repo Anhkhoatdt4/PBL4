@@ -14,15 +14,12 @@ public class DijkstraMatrix {
     	
     	String filePath = "C:\\Users\\nguye\\Documents\\Data.txt";; 
 
-    	
         Scanner scanner = new Scanner(System.in);
         List<Vert> vertList = FileRead.readGraphFromFile(filePath);
         
         Vert sourceVert = null, targetVert = null;
         while (sourceVert == null || targetVert == null) {
-            System.out.print("Nhập tên đỉnh nguồn: ");
             String sourceName = scanner.nextLine();
-            System.out.print("Nhập tên đỉnh đích: ");
             String targetName = scanner.nextLine();
 
             for (Vert vert : vertList) {
@@ -33,7 +30,6 @@ public class DijkstraMatrix {
                     targetVert = vert;
                 }
             }
-
             if (sourceVert == null || targetVert == null) {
                 System.out.println("Tên đỉnh không hợp lệ. Vui lòng nhập lại.");
             }
@@ -51,9 +47,6 @@ public class DijkstraMatrix {
             }
         }
         System.out.println();
-        System.out.println("Bảng chỉ đường: ");
-        
-       
-        
+        System.out.println("Bảng chỉ đường: "); 
     }
 }

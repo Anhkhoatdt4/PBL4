@@ -15,14 +15,14 @@ import service.Edge;
 public class GraphPanel extends JPanel {
     private List<Vert> vertices;
     private final int vertexRadius = 20;
-    private final int radius = 100; // Radius of the circle containing the vertices
-    private final int centerX = 300; // Fixed X position for center
-    private final int centerY = 300; // Fixed Y position for center
+    private final int radius = 100;
+    private final int centerX = 300;
+    private final int centerY = 300;
     
     private List<Vert> shortestPath;
     private Vert source;
     private Vert destination;
-    private int shortestPathDistance; // Add this to store distance
+    private int shortestPathDistance;
 
     public GraphPanel(List<Vert> vertices) {
         this.vertices = vertices;
@@ -34,17 +34,16 @@ public class GraphPanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         
-        float strokeWidth = 3.0f; // Line width
+        float strokeWidth = 3.0f;
         g2d.setStroke(new BasicStroke(strokeWidth));
 
         int numVertices = vertices.size();
-        double angleStep = 2 * Math.PI / numVertices; // Angle step to evenly distribute vertices around the circle
-        double startAngle = Math.PI; // Starting angle for the first vertex
+        double angleStep = 2 * Math.PI / numVertices;
+        double startAngle = Math.PI;
 
         int[] xPoints = new int[numVertices];
         int[] yPoints = new int[numVertices];
 
-        // Colors
         Color darkGreen = new Color(0, 148, 0);
         Color darkBlue = new Color(0, 0, 139);
         Color shortestPathColor = Color.RED;
@@ -53,7 +52,6 @@ public class GraphPanel extends JPanel {
         int infoAreaHeight = 130; 
         int graphPanelHeight = getHeight() - infoAreaHeight; 
 
-        // Draw vertices
         for (int i = 0; i < numVertices; i++) {
             Vert v = vertices.get(i);
             double angle = startAngle + i * angleStep;
@@ -74,14 +72,12 @@ public class GraphPanel extends JPanel {
             g2d.drawString(v.getName(), x - vertexRadius / 2, y + vertexRadius / 4);
         }
 
-        // Draw edges
         for (int i = 0; i < numVertices; i++) {
             Vert v = vertices.get(i);
             for (Edge e : v.getList()) {
                 Vert target = e.getTargetVert();
                 int targetIndex = vertices.indexOf(target);
 
-                // Check if edge is part of the shortest path
                 boolean isShortestPath = shortestPath != null &&
                                          shortestPath.contains(v) && shortestPath.contains(target);
 
@@ -92,7 +88,6 @@ public class GraphPanel extends JPanel {
             }
         }
 
-        // Draw weights
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font("Arial", Font.BOLD, 15));
         for (int i = 0; i < numVertices; i++) {
@@ -107,13 +102,10 @@ public class GraphPanel extends JPanel {
             }
         }
 
-        // Draw shortest path details
         if (shortestPath != null && !shortestPath.isEmpty()) {
             g2d.setColor(Color.RED);
             g2d.setFont(new Font("Arial", Font.PLAIN, 14));
             
-            System.out.println("Shortest Path In GraphPanel: " + shortestPath);
-            System.out.println("Distance In GraphPanel: " + shortestPathDistance);
             int xOffset = 200;
             int yOffset = graphPanelHeight;
 
